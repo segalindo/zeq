@@ -4,10 +4,13 @@
 
 namespace zeq.hbp;
 
-table BinarySetOperation
+enum CellSetOpType : byte { SYNAPTIC_PROJECTION = 0 }
+
+table CellSetBinaryOp
 {
   first:[uint];
   second:[uint];
+  operation:CellSetOpType;
 }
 
-root_type BinarySetOperation;
+root_type CellSetBinaryOp;

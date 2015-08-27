@@ -16,7 +16,8 @@
 #include <zeq/hbp/imageJPEG_zeq_generated.h>
 #include <zeq/hbp/lookupTable1D_zeq_generated.h>
 #include <zeq/hbp/selections_zeq_generated.h>
-#include <zeq/hbp/binarySetOperation_zeq_generated.h>
+#include <zeq/hbp/cellSetBinaryOp_zeq_generated.h>
+#include <zeq/hbp/cellSetBinaryOp_generated.h>
 
 namespace zeq
 {
@@ -68,6 +69,17 @@ struct ImageJPEG
 private:
     const uint32_t _sizeInBytes;
     const uint8_t* _data;
+};
+
+
+
+struct CellSetBinaryOp
+{
+public:
+
+  std::vector< unsigned int > first;
+  std::vector< unsigned int > second;
+  zeq::hbp::CellSetOpType operation;
 };
 
 }
@@ -176,27 +188,21 @@ ZEQ_API Event serializeImageJPEG( const data::ImageJPEG& image );
 ZEQ_API data::ImageJPEG deserializeImageJPEG( const Event& event );
 
 /**
- * Serialize the given pair of unsigned int sets into an Event of type
- * EVENT_BINARYSETOPERATION. Sets may be different.
- * @param std::pair consisting of a couple of unsigned int vectors.
+ * Serialize the given CellSetBinaryOp into an Event of type
+ * EVENT_CELLSETBINARYOP.
+ * @param cellSetBinaryOp the CellSetBinaryOp to be serialized.
  * @return the serialized event.
  */
 ZEQ_API
-Event serializeBinarySetOperation(
-    const std::pair< std::vector< unsigned int >,
-                     std::vector< unsigned int >>& binarySet );
+Event serializeCellSetBinaryOp( const data::CellSetBinaryOp& cellSetBinaryOp );
 
 /**
- * Deserialize the given EVENT_BINARYSETOPERATION event into a std::pair
- * containing a couple of std::vector of unsigned int.
- * @param event product of serializeBinarySetOperation.
- * @return a pair of unsigned int vectors.
+ * Deserialize the given EVENT_CELLSETBINARYOP event into a CellSetBinaryOp
+ * consisting of a couple of std::vector of unsigned int and the operation type.
+ * @param event the event product of serializeCellSetBinaryOp.
+ * @return the deserialized CellSetBinaryOp.
  */
-ZEQ_API
-std::pair< std::vector< unsigned int >,
-           std::vector< unsigned int >>
-           deserializeBinarySetOperation( const Event& event );
-
+ZEQ_API data::CellSetBinaryOp deserializeCellSetBinaryOp( const Event& event );
 
 }
 }

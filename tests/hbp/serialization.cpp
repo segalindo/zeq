@@ -96,30 +96,30 @@ BOOST_AUTO_TEST_CASE( imageJPEGEvent )
                                    deserializedImage.getDataPtr() + size );
 }
 
-BOOST_AUTO_TEST_CASE( binarySetOperation )
+BOOST_AUTO_TEST_CASE( cellSetBinaryOp )
 {
-  unsigned int firstSet[ ] = { 0, 2, 4, 6 },
-               secondSet[ ] = { 1, 3, 5, 7 };
-  const std::vector< unsigned int  > first (
-      firstSet, firstSet + sizeof( firstSet ) / sizeof( unsigned int ));
-  const std::vector< unsigned int > second (
-      secondSet, secondSet + sizeof( secondSet ) / sizeof( unsigned int ));
+  zeq::hbp::data::CellSetBinaryOp cellSet;
+  cellSet.first = { 0, 2, 4, 6 };
+  cellSet.second = { 1, 3, 5, 7 };
+  cellSet.operation =
+      zeq::hbp::CellSetOpType::CellSetOpType_SYNAPTIC_PROJECTION;
 
-  std::pair< std::vector< unsigned int >, std::vector< unsigned int >> pair =
-      std::make_pair( first, second );
+  const zeq::Event& cellSetBinaryOpEvent =
+      zeq::hbp::serializeCellSetBinaryOp( cellSet );
 
-  const zeq::Event& binarySetEvent =
-      zeq::hbp::serializeBinarySetOperation( pair );
+  zeq::hbp::data::CellSetBinaryOp deserializedCellSetBinaryOp =
+      zeq::hbp::deserializeCellSetBinaryOp( cellSetBinaryOpEvent );
 
-  const  std::pair< std::vector< unsigned int >,
-  std::vector< unsigned int >> deserializedBinarySet =
-      zeq::hbp::deserializeBinarySetOperation( binarySetEvent );
+  BOOST_CHECK_EQUAL( cellSet.operation,
+                     deserializedCellSetBinaryOp.operation);
 
-  BOOST_CHECK_EQUAL_COLLECTIONS( first.begin( ), first.end( ),
-                                 deserializedBinarySet.first.begin( ),
-                                 deserializedBinarySet.first.end( ));
+  BOOST_CHECK_EQUAL_COLLECTIONS( cellSet.first.begin( ),
+                                 cellSet.first.end( ),
+                                 deserializedCellSetBinaryOp.first.begin( ),
+                                 deserializedCellSetBinaryOp.first.end( ));
 
-  BOOST_CHECK_EQUAL_COLLECTIONS( second.begin( ), second.end( ),
-                                 deserializedBinarySet.second.begin( ),
-                                 deserializedBinarySet.second.end( ));
+  BOOST_CHECK_EQUAL_COLLECTIONS( cellSet.second.begin( ),
+                                 cellSet.second.end( ),
+                                 deserializedCellSetBinaryOp.second.begin( ),
+                                 deserializedCellSetBinaryOp.second.end( ));
 }

@@ -11,7 +11,6 @@
 #include <zeq/hbp/imageJPEG_generated.h>
 #include <zeq/hbp/selections_generated.h>
 #include <zeq/hbp/lookupTable1D_generated.h>
-#include <zeq/hbp/binarySetOperation_generated.h>
 #include <zeq/event.h>
 #include <zeq/vocabulary.h>
 
@@ -155,32 +154,35 @@ std::vector< uint8_t > deserializeLookupTable1D( const Event& event )
     return deserializeVector( data->lut( ));
 }
 
-Event serializeBinarySetOperation(
-const std::pair< uints, uints>& binarySet )
+Event serializeCellSetBinaryOp( const data::CellSetBinaryOp& cellSetBinaryOp )
 {
-  zeq::Event event(EVENT_BINARYSETOPERATION);
+  zeq::Event event( EVENT_CELLSETBINARYOP );
 
-  flatbuffers::FlatBufferBuilder& fbb = event.getFBB();
+  flatbuffers::FlatBufferBuilder& fbb = event.getFBB( );
 
-  auto firstData = fbb.CreateVector( binarySet.first );
-  auto secondData = fbb.CreateVector( binarySet.second );
+  auto firstData = fbb.CreateVector( cellSetBinaryOp.first );
+  auto secondData = fbb.CreateVector( cellSetBinaryOp.second );
 
-  BinarySetOperationBuilder builder( fbb );
+  CellSetBinaryOpBuilder builder( fbb );
   builder.add_first( firstData );
   builder.add_second( secondData );
+  builder.add_operation( cellSetBinaryOp.operation );
 
-  fbb.Finish( builder.Finish( ) );
+  fbb.Finish( builder.Finish( ));
 
   return event;
 }
 
-std::pair< uints, uints>
-deserializeBinarySetOperation( const Event& event )
+data::CellSetBinaryOp
+deserializeCellSetBinaryOp( const Event& event )
 {
-  auto data = GetBinarySetOperation( event.getData( ));
-  std::pair< uints, uints> result =
-      std::make_pair( deserializeVector( data->first( )),
-                      deserializeVector( data->second( )));
+  data::CellSetBinaryOp result;
+
+  auto data = GetCellSetBinaryOp( event.getData( ));
+  result.first = deserializeVector( data->first( ));
+  result.second = deserializeVector( data->second( ));
+  result.operation = data->operation( );
+
   return result;
 }
 
