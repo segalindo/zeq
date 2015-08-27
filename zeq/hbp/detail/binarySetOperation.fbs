@@ -9,3 +9,5 @@ table BinarySetOperation
   first:[uint];
   second:[uint];
 }
+
+root_type BinarySetOperation;

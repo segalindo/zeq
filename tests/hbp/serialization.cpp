@@ -95,3 +95,31 @@ BOOST_AUTO_TEST_CASE( imageJPEGEvent )
                                    deserializedImage.getDataPtr(),
                                    deserializedImage.getDataPtr() + size );
 }
+
+BOOST_AUTO_TEST_CASE( binarySetOperation )
+{
+  unsigned int firstSet[ ] = { 0, 2, 4, 6 },
+               secondSet[ ] = { 1, 3, 5, 7 };
+  const std::vector< unsigned int  > first (
+      firstSet, firstSet + sizeof( firstSet ) / sizeof( unsigned int ));
+  const std::vector< unsigned int > second (
+      secondSet, secondSet + sizeof( secondSet ) / sizeof( unsigned int ));
+
+  std::pair< std::vector< unsigned int >, std::vector< unsigned int >> pair =
+      std::make_pair( first, second );
+
+  const zeq::Event& binarySetEvent =
+      zeq::hbp::serializeBinarySetOperation( pair );
+
+  const  std::pair< std::vector< unsigned int >,
+  std::vector< unsigned int >> deserializedBinarySet =
+      zeq::hbp::deserializeBinarySetOperation( binarySetEvent );
+
+  BOOST_CHECK_EQUAL_COLLECTIONS( first.begin( ), first.end( ),
+                                 deserializedBinarySet.first.begin( ),
+                                 deserializedBinarySet.first.end( ));
+
+  BOOST_CHECK_EQUAL_COLLECTIONS( second.begin( ), second.end( ),
+                                 deserializedBinarySet.second.begin( ),
+                                 deserializedBinarySet.second.end( ));
+}
